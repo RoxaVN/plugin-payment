@@ -1,1 +1,7 @@
-# plugin-payment
+# @roxavn/plugin-payment
+
+## Release
+
+```
+npx standard-version
+```

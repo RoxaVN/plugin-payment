@@ -1,0 +1,67 @@
+{
+  "name": "@roxavn/plugin-payment",
+  "version": "0.1.0",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "roxavn build",
+    "dev": "roxavn dev",
+    "prepare": "husky install"
+  },
+  "license": "MIT",
+  "author": "roxavn",
+  "type": "module",
+  "roxavn": {},
+  "sideEffects": false,
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.1",
+    "@commitlint/config-conventional": "^18.4.0",
+    "@roxavn/cli": "^0.2.0",
+    "@roxavn/module-user": "^0.2.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "standard-version": "^9.5.0",
+    "typescript": "^5.0.4"
+  },
+  "peerDependencies": {
+    "@mantine/core": "^6.0.0",
+    "@remix-run/node": "^1.19.1",
+    "@remix-run/react": "^1.19.1",
+    "@roxavn/core": "^0.2.0",
+    "@tabler/icons-react": "^2.12.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typeorm": "^0.3.10"
+  },
+  "exports": {
+    ".": "./dist/esm/index.js",
+    "./web": "./dist/esm/web/index.js",
+    "./base": "./dist/esm/base/index.js",
+    "./server": "./dist/esm/server/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "web": [
+        "dist/esm/web/index.d.ts"
+      ],
+      "base": [
+        "dist/esm/base/index.d.ts"
+      ],
+      "server": [
+        "dist/esm/server/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE.txt",
+    "/dist",
+    "/static"
+  ]
+}
