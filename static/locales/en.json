@@ -1,7 +1,10 @@
 {
-  "myModel": "My model",
+  "deposit": "Deposit",
+  "withdraw": "Widthdraw",
+  "depositAmount": "Deposit amount",
+  "receivedAmount": "Received amount",
   "Meta": {
-    "name": "Sample module",
-    "description": "Sample module"
+    "name": "Payment",
+    "description": "Payment"
   }
 }

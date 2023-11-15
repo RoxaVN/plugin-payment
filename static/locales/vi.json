@@ -1,7 +1,10 @@
 {
-  "myModel": "Model của tôi",
+  "deposit": "Nạp tiền",
+  "withdraw": "Rút tiền",
+  "depositAmount": "Số tiền nạp vào",
+  "receivedAmount": "Số tiền nhận được",
   "Meta": {
-    "name": "Module mẫu",
-    "description": "Module mẫu"
+    "name": "Thanh toán",
+    "description": "Thanh toán"
   }
 }
