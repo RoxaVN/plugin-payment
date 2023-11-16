@@ -1,10 +1,15 @@
+import { NotFoundException } from '@roxavn/core';
 import { BaseService, inject } from '@roxavn/core/server';
-import { CreateTransactionService } from '@roxavn/module-currency/server';
+import { UserAccountNotFoundException } from '@roxavn/module-currency/base';
+import {
+  type AccountTransaction,
+  CreateTransactionService,
+  GetCurrencyAccountsApiService,
+} from '@roxavn/module-currency/server';
 import { GetUsersApiService } from '@roxavn/module-user/server';
 
 import { serverModule } from '../module.js';
 import { constants } from '../../base/index.js';
-import { NotFoundException } from '@roxavn/core';
 
 @serverModule.injectable()
 export class CreatePaymentTransactionService extends BaseService {
@@ -14,7 +19,9 @@ export class CreatePaymentTransactionService extends BaseService {
     @inject(CreateTransactionService)
     protected createTransactionService: CreateTransactionService,
     @inject(GetUsersApiService)
-    public getUsersApiService: GetUsersApiService
+    protected getUsersApiService: GetUsersApiService,
+    @inject(GetCurrencyAccountsApiService)
+    protected getCurrencyAccountsApiService: GetCurrencyAccountsApiService
   ) {
     super();
   }
@@ -27,7 +34,6 @@ export class CreatePaymentTransactionService extends BaseService {
     account: {
       userId: string;
       amount: number | bigint;
-      type?: string;
     };
   }) {
     if (!this.paymentUserId) {
@@ -40,18 +46,41 @@ export class CreatePaymentTransactionService extends BaseService {
         throw new NotFoundException();
       }
     }
-    return this.createTransactionService.handle({
+    const { items } = await this.getCurrencyAccountsApiService.handle({
+      userIds: [this.paymentUserId, request.account.userId],
+      currencyId: request.currencyId,
+    });
+    const userAccount = items.find(
+      (item) => item.userId === request.account.userId
+    );
+    if (!userAccount) {
+      throw new UserAccountNotFoundException(request.account.userId);
+    }
+    const paymentAccount = items.find(
+      (item) => item.userId === this.paymentUserId
+    );
+    if (!paymentAccount) {
+      throw new UserAccountNotFoundException(this.paymentUserId);
+    }
+    const transactions = await this.createTransactionService.handle({
       currencyId: request.currencyId,
       type: request.type,
       originalTransactionId: request.originalTransactionId,
       metadata: request.metadata,
       accounts: [
-        request.account,
         {
-          userId: this.paymentUserId,
+          accountId: userAccount.id,
+          amount: request.account.amount,
+        },
+        {
+          accountId: paymentAccount.id,
           amount: -request.account.amount,
         },
       ],
     });
+
+    return transactions.find(
+      (t) => t.accountId === userAccount.id
+    ) as AccountTransaction;
   }
 }
