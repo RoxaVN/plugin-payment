@@ -4,7 +4,7 @@ import { UserAccountNotFoundException } from '@roxavn/module-currency/base';
 import {
   type AccountTransaction,
   CreateTransactionService,
-  GetCurrencyAccountsApiService,
+  GetUserCurrencyAccountsService,
 } from '@roxavn/module-currency/server';
 import { GetUsersApiService } from '@roxavn/module-user/server';
 
@@ -20,8 +20,8 @@ export class CreatePaymentTransactionService extends BaseService {
     protected createTransactionService: CreateTransactionService,
     @inject(GetUsersApiService)
     protected getUsersApiService: GetUsersApiService,
-    @inject(GetCurrencyAccountsApiService)
-    protected getCurrencyAccountsApiService: GetCurrencyAccountsApiService
+    @inject(GetUserCurrencyAccountsService)
+    protected getUserCurrencyAccountsService: GetUserCurrencyAccountsService
   ) {
     super();
   }
@@ -46,8 +46,11 @@ export class CreatePaymentTransactionService extends BaseService {
         throw new NotFoundException();
       }
     }
-    const { items } = await this.getCurrencyAccountsApiService.handle({
-      userIds: [this.paymentUserId, request.account.userId],
+    const { items } = await this.getUserCurrencyAccountsService.handle({
+      accounts: [
+        { userId: this.paymentUserId },
+        { userId: request.account.userId },
+      ],
       currencyId: request.currencyId,
     });
     const userAccount = items.find(
