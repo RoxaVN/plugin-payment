@@ -13,7 +13,8 @@ import { constants } from '../../base/index.js';
 
 @serverModule.injectable()
 export class CreatePaymentTransactionService extends BaseService {
-  paymentAccountId?: string;
+  paymentAccountIds: Record<string, string> = {};
+  paymentUserId?: string;
 
   constructor(
     @inject(CreateTransactionService)
@@ -36,25 +37,30 @@ export class CreatePaymentTransactionService extends BaseService {
       amount: number | bigint;
     };
   }) {
-    if (!this.paymentAccountId) {
-      const users = await this.getUsersApiService.handle({
-        username: constants.PAYMENT_ACCOUNT,
-      });
-      if (users.items.length) {
-        const paymentUserId = users.items[0].id;
-        const accounts = await this.getUserCurrencyAccountsService.handle({
-          accounts: [{ userId: paymentUserId }],
-          currencyId: request.currencyId,
+    let paymentAccountId = this.paymentAccountIds[request.currencyId];
+    if (!paymentAccountId) {
+      if (!this.paymentUserId) {
+        const { items } = await this.getUsersApiService.handle({
+          username: constants.PAYMENT_ACCOUNT,
         });
-        if (accounts.items.length) {
-          this.paymentAccountId = accounts.items[0].id;
+        if (items.length) {
+          this.paymentUserId = items[0].id;
         } else {
-          throw new UserAccountNotFoundException(paymentUserId);
+          throw new NotFoundException();
         }
+      }
+      const { items } = await this.getUserCurrencyAccountsService.handle({
+        accounts: [{ userId: this.paymentUserId }],
+        currencyId: request.currencyId,
+      });
+      if (items.length) {
+        paymentAccountId = items[0].id;
+        this.paymentAccountIds[request.currencyId] = paymentAccountId;
       } else {
-        throw new NotFoundException();
+        throw new UserAccountNotFoundException(this.paymentUserId);
       }
     }
+
     const { items } = await this.getUserCurrencyAccountsService.handle({
       accounts: [{ userId: request.account.userId }],
       currencyId: request.currencyId,
@@ -75,7 +81,7 @@ export class CreatePaymentTransactionService extends BaseService {
           amount: request.account.amount,
         },
         {
-          accountId: this.paymentAccountId,
+          accountId: paymentAccountId,
           amount: -request.account.amount,
         },
       ],
