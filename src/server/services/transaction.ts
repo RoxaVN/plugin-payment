@@ -31,6 +31,7 @@ export class CreatePaymentTransactionService extends BaseService {
     metadata?: Record<string, any>;
     account: {
       userId: string;
+      type?: string;
       amount: number | bigint;
     };
   }) {
@@ -42,7 +43,12 @@ export class CreatePaymentTransactionService extends BaseService {
     }
 
     const { items } = await this.getUserCurrencyAccountsService.handle({
-      accounts: [{ userId: request.account.userId }],
+      accounts: [
+        {
+          userId: request.account.userId,
+          type: request.account.type,
+        },
+      ],
       currencyId: request.currencyId,
     });
     if (items.length < 1) {
