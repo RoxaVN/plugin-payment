@@ -1,7 +1,10 @@
 {
   "deposit": "Nạp tiền",
   "withdraw": "Rút tiền",
+  "orders": "Yêu cầu",
+  "createOrder": "Tạo yêu cầu",
   "depositAmount": "Số tiền nạp vào",
+  "withdrawAmount": "Số tiền rút ra",
   "receivedAmount": "Số tiền nhận được",
   "Meta": {
     "name": "Thanh toán",

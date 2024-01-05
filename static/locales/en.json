@@ -1,7 +1,10 @@
 {
   "deposit": "Deposit",
-  "withdraw": "Widthdraw",
+  "withdraw": "Withdraw",
+  "orders": "Orders",
+  "createOrder": "Create order",
   "depositAmount": "Deposit amount",
+  "withdrawAmount": "Withdraw amount",
   "receivedAmount": "Received amount",
   "Meta": {
     "name": "Payment",
